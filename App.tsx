@@ -11,164 +11,237 @@ declare global {
   }
 }
 
-// --- Constants ---
-const INDICATOR_NAMES = [
-  "Akses Pendidikan", "Partisipasi Sekolah", "Kualitas Sekolah", "Akses Kesehatan", "Posyandu", "Nakes Desa", "BPJS", "Air Bersih", "Sanitasi", "RTLH", "Listrik", "Internet", "Info Publik", // DLD
-  "Gotong Royong", "Ruang Publik", "Keamanan", "Konflik", "Ormas", "Olahraga", "Budaya", "Toleransi", // DS
-  "Produksi", "Akses Pasar", "Toko/Warung", "BUMDes", "Kinerja BUMDes", "Kredit", "Logistik", "Jalan Desa", "Digital", "Produk Unggulan", "Pasar Desa", // DE
-  "Air Sungai", "Sampah", "Pencemaran", "Bencana", "Tanggap Bencana", // DL
-  "Angkutan", "Jalan Poros", "Jembatan", "Waktu Kec", "Waktu Kab", // DA
-  "Musyawarah", "Transparansi", "Kinerja", "Aset", "Regulasi" // DTKPD
-];
-
 // --- Helpers ---
 const fmtMoney = (val: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
 
-// --- Components ---
+// --- Styles & Glass Components ---
+const GlassCard = ({ children, className = "", hover = false }: { children: React.ReactNode, className?: string, hover?: boolean }) => (
+  <div className={`
+    relative bg-slate-900/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl overflow-hidden
+    ${hover ? 'transition-all duration-300 hover:bg-slate-800/50 hover:border-white/20 hover:shadow-blue-500/20 hover:-translate-y-1' : ''}
+    ${className}
+  `}>
+    {children}
+  </div>
+);
+
+const NeonBadge = ({ children, color = "blue" }: { children: React.ReactNode, color?: "blue"|"green"|"purple"|"amber" }) => {
+    const colors = {
+        blue: "bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]",
+        green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]",
+        purple: "bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_10px_rgba(168,85,247,0.2)]",
+        amber: "bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+    };
+    return (
+        <span className={`px-2 py-0.5 rounded-lg border text-[10px] font-bold uppercase tracking-wider backdrop-blur-md ${colors[color] || colors.blue}`}>
+            {children}
+        </span>
+    );
+}
 
 const InfoModal = ({ onClose }: { onClose: () => void }) => {
     return (
-        <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl p-6">
-                <div className="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
-                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+            <GlassCard className="w-full max-w-lg p-6 !bg-slate-900/90 !border-white/20">
+                <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                    <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 flex items-center gap-2">
                         <i className="fa-solid fa-circle-info text-blue-500"></i> Metadata & Sumber Data
                     </h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white transition"><i className="fa-solid fa-xmark text-lg"></i></button>
+                    <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition text-slate-300 hover:text-white">
+                        <i className="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 
-                <div className="space-y-4 text-sm text-slate-300">
+                <div className="space-y-5 text-sm text-slate-300">
                     <div>
-                        <h3 className="text-xs font-bold uppercase text-slate-500 mb-1">Judul Dataset</h3>
-                        <p className="font-mono bg-slate-900/50 p-2 rounded text-white border border-slate-700">ADMINISTRASI_AR_DESAKEL (Edisi Tahun 2023)</p>
+                        <h3 className="text-xs font-bold uppercase text-slate-500 mb-1 tracking-wider">Judul Dataset</h3>
+                        <div className="font-mono bg-black/40 p-3 rounded-lg text-emerald-400 border border-white/5 shadow-inner">ADMINISTRASI_AR_DESAKEL (Edisi Tahun 2023)</div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <h3 className="text-xs font-bold uppercase text-slate-500 mb-1">Sumber (Owner)</h3>
-                            <p className="font-semibold">Badan Informasi Geospasial (BIG)</p>
-                            <p className="text-xs text-slate-400">Pusat Pemetaan Batas Wilayah</p>
+                            <h3 className="text-xs font-bold uppercase text-slate-500 mb-1 tracking-wider">Sumber (Owner)</h3>
+                            <p className="font-semibold text-white">Badan Informasi Geospasial (BIG)</p>
+                            <p className="text-xs text-slate-500">Pusat Pemetaan Batas Wilayah</p>
                         </div>
                         <div>
-                            <h3 className="text-xs font-bold uppercase text-slate-500 mb-1">Tanggal Publikasi</h3>
-                            <p>28 September 2023</p>
+                            <h3 className="text-xs font-bold uppercase text-slate-500 mb-1 tracking-wider">Tanggal Publikasi</h3>
+                            <p className="font-semibold text-white">28 September 2023</p>
                         </div>
                     </div>
 
                     <div>
-                         <h3 className="text-xs font-bold uppercase text-slate-500 mb-1">Abstrak</h3>
-                         <p className="text-xs leading-relaxed text-slate-400">
-                             Geodatabase batas wilayah administrasi desa/kelurahan skala 1:10.000. Pemutakhiran September 2023 mencakup hasil verifikasi teknis batas wilayah, penyelarasan batas kabupaten/kota, dan sinkronisasi Kepmendagri 100.1.1-6117 Tahun 2022.
-                         </p>
-                    </div>
-                    
-                    <div>
-                         <h3 className="text-xs font-bold uppercase text-slate-500 mb-1">Akses Data</h3>
-                         <a href="https://geoservices.big.go.id/rbi/rest/services/BATASWILAYAH/Administrasi_AR_KelDesa_10K/MapServer?f=jsapi" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-2 bg-slate-900/50 p-2 rounded border border-slate-700 hover:border-blue-500 transition">
-                            <i className="fa-solid fa-layer-group"></i> 
-                            <span>ESRI MapServer (Administrasi_AR_KelDesa_10K)</span>
-                            <i className="fa-solid fa-external-link-alt text-[10px] ml-auto"></i>
+                         <h3 className="text-xs font-bold uppercase text-slate-500 mb-1 tracking-wider">Akses Data</h3>
+                         <a href="https://geoservices.big.go.id/rbi/rest/services/BATASWILAYAH/Administrasi_AR_KelDesa_10K/MapServer?f=jsapi" target="_blank" rel="noopener noreferrer" 
+                            className="group flex items-center gap-3 bg-blue-600/10 p-3 rounded-lg border border-blue-500/20 hover:bg-blue-600/20 hover:border-blue-500/50 transition duration-300">
+                            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition"><i className="fa-solid fa-layer-group"></i></div>
+                            <span className="text-blue-300 text-xs font-medium group-hover:text-blue-200">ESRI MapServer (Administrasi_AR_KelDesa_10K)</span>
+                            <i className="fa-solid fa-arrow-up-right-from-square text-[10px] ml-auto text-blue-500/50 group-hover:text-blue-400"></i>
                          </a>
                     </div>
 
-                    <div className="mt-4 bg-yellow-900/20 border border-yellow-700/50 p-3 rounded text-yellow-200/80 text-xs flex gap-2 items-start">
-                        <i className="fa-solid fa-triangle-exclamation mt-0.5"></i>
-                        <p>Catatan: Dashboard ini menggunakan referensi administratif dari dataset di atas. Koordinat titik pada peta merupakan <strong>estimasi centroid</strong> karena data batas definitif desa sedang dalam proses pemutakhiran berkelanjutan oleh BIG.</p>
+                    <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-amber-200/90 text-xs flex gap-3 items-start backdrop-blur-sm">
+                        <i className="fa-solid fa-triangle-exclamation mt-0.5 text-amber-400 text-lg"></i>
+                        <p className="leading-relaxed">Catatan: Dashboard ini menggunakan referensi administratif dari dataset di atas. Koordinat titik pada peta merupakan <strong>estimasi centroid</strong> karena data batas definitif desa sedang dalam proses pemutakhiran berkelanjutan oleh BIG.</p>
                     </div>
                 </div>
-            </div>
+            </GlassCard>
         </div>
     );
 };
 
-const Navbar = ({ kpi, data }: { kpi: { mandiri: number, maju: number, berkembang: number }, data: VillageData[] }) => {
+const Navbar = ({ 
+    kpi, 
+    data, 
+    view, 
+    setView,
+    searchTerm,
+    setSearchTerm
+}: { 
+    kpi: { mandiri: number, maju: number, berkembang: number }, 
+    data: VillageData[],
+    view: string,
+    setView: (v: string) => void,
+    searchTerm: string,
+    setSearchTerm: (s: string) => void
+}) => {
   const [showInfo, setShowInfo] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchTerm);
+
+  // Debounce search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+        setSearchTerm(localSearch);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [localSearch, setSearchTerm]);
+
+  useEffect(() => {
+      if(searchTerm !== localSearch) setLocalSearch(searchTerm);
+  }, [searchTerm]);
 
   const handleExport = () => {
     if (data.length === 0) {
         alert("Tidak ada data untuk diekspor.");
         return;
     }
-
-    // Helper to escape CSV fields
-    const escape = (val: string | number) => {
-        if (typeof val === 'string') {
-            return `"${val.replace(/"/g, '""')}"`;
-        }
-        return val;
-    };
-
-    // CSV Header
-    const headers = [
-        "No", "Kecamatan", "Kode Desa", "Nama Desa", "Status", "Skor Total",
-        "Layanan Dasar (DLD)", "Sosial (DS)", "Ekonomi (DE)", 
-        "Lingkungan (DL)", "Aksesibilitas (DA)", "Tata Kelola (TK)"
-    ];
-
-    // Map data to rows
+    const escape = (val: string | number) => typeof val === 'string' ? `"${val.replace(/"/g, '""')}"` : val;
+    const headers = ["No", "Kecamatan", "Kode Desa", "Nama Desa", "Status", "Skor Total", "DLD", "DS", "DE", "DL", "DA", "TK"];
     const rows = data.map((row, index) => [
-        index + 1,
-        escape(row.kec),
-        escape(row.kode),
-        escape(row.desa),
-        escape(row.status),
-        escape(row.skor),
-        row.dimensi.dld,
-        row.dimensi.ds,
-        row.dimensi.de,
-        row.dimensi.dl,
-        row.dimensi.da,
-        row.dimensi.dtkpd
+        index + 1, escape(row.kec), escape(row.kode), escape(row.desa), escape(row.status), escape(row.skor),
+        row.dimensi.dld, row.dimensi.ds, row.dimensi.de, row.dimensi.dl, row.dimensi.da, row.dimensi.dtkpd
     ]);
-
-    // Combine header and rows
-    const csvContent = [
-        headers.join(","),
-        ...rows.map(r => r.join(","))
-    ].join("\n");
-
-    // Create blob and download link
+    const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Data_Desa_Lamtim_${new Date().toISOString().slice(0,10)}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
+    link.href = url;
+    link.download = `Data_Desa_Lamtim_${new Date().toISOString().slice(0,10)}.csv`;
     link.click();
-    document.body.removeChild(link);
   };
+
+  const navItems = [
+    { id: 'map', label: 'Peta', icon: 'fa-map' },
+    { id: 'table', label: 'Tabel', icon: 'fa-table' },
+    { id: 'stats', label: 'Statistik', icon: 'fa-chart-pie' },
+    { id: 'rpjmd', label: 'RPJMD', icon: 'fa-scroll' },
+  ];
 
   return (
     <>
-        <nav className="h-16 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6 shrink-0 z-20 shadow-lg">
-        <div className="flex items-center gap-3">
-            <div className="bg-blue-600/20 p-2 rounded-lg text-blue-500">
-            <i className="fa-solid fa-database text-xl"></i>
+        <GlassCard className="h-20 px-6 shrink-0 z-50 flex items-center justify-between !bg-slate-900/60 !border-white/10 !backdrop-blur-xl">
+            {/* Brand */}
+            <div className="flex items-center gap-4 shrink-0">
+                <div className="relative group cursor-pointer">
+                    <div className="absolute inset-0 bg-blue-500 blur-lg opacity-40 group-hover:opacity-60 transition duration-500 rounded-full"></div>
+                    <div className="relative w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-white/10 flex items-center justify-center text-blue-400 shadow-xl">
+                        <i className="fa-solid fa-database text-xl"></i>
+                    </div>
+                </div>
+                <div className="hidden sm:block">
+                    <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 tracking-tight">DATA INDEKS DESA 2025</h1>
+                    <div className="flex items-center gap-2">
+                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                         <p className="text-[10px] text-blue-300/80 uppercase tracking-[0.2em] font-medium">Kabupaten Lampung Timur</p>
+                    </div>
+                </div>
             </div>
-            <div>
-            <h1 className="text-lg font-bold text-white tracking-wide">DATA INDEKS DESA 2025</h1>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest">Kabupaten Lampung Timur</p>
-            </div>
-        </div>
-        <div className="flex gap-4 items-center">
-            <div className="hidden lg:flex bg-slate-700 px-3 py-1 rounded-full text-xs gap-3">
-            <span className="text-green-400 font-bold">Mandiri: {kpi.mandiri}</span>
-            <span className="w-px bg-slate-600"></span>
-            <span className="text-blue-400 font-bold">Maju: {kpi.maju}</span>
-            <span className="w-px bg-slate-600"></span>
-            <span className="text-yellow-400 font-bold">Berkembang: {kpi.berkembang}</span>
-            </div>
-            
-            <button onClick={() => setShowInfo(true)} className="text-slate-400 hover:text-white transition" title="Metadata Info">
-                 <i className="fa-solid fa-circle-info text-lg"></i>
-            </button>
 
-            <button onClick={handleExport} className="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded text-xs font-bold transition flex items-center gap-2" title="Unduh data difilter (CSV)">
-            <i className="fa-solid fa-file-csv"></i> Export
-            </button>
-        </div>
-        </nav>
+            {/* Navigation Pill */}
+            <div className="hidden md:flex items-center bg-black/20 backdrop-blur-md p-1.5 rounded-2xl border border-white/5 shadow-inner shrink-0">
+                {navItems.map(item => (
+                    <button 
+                        key={item.id}
+                        onClick={() => setView(item.id)}
+                        className={`
+                            relative px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 overflow-hidden group
+                            ${view === item.id 
+                                ? 'text-white shadow-lg' 
+                                : 'text-slate-400 hover:text-white hover:bg-white/5'}
+                        `}
+                    >
+                        {view === item.id && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90"></div>
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                             <i className={`fa-solid ${item.icon} ${view === item.id ? 'animate-bounce-short' : ''}`}></i>
+                             {item.label}
+                        </span>
+                    </button>
+                ))}
+            </div>
+
+            {/* Global Search Bar */}
+            <div className="hidden lg:flex relative group mx-4 flex-1 max-w-xs">
+                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i className="fa-solid fa-search text-slate-400 group-focus-within:text-blue-400 transition"></i>
+                 </div>
+                 <input 
+                    type="text"
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
+                    placeholder="Cari Desa/Kecamatan..."
+                    className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:bg-black/40 transition-all shadow-inner"
+                 />
+            </div>
+
+            {/* KPI & Actions */}
+            <div className="flex gap-4 items-center shrink-0">
+                {view !== 'rpjmd' && (
+                    <div className="hidden xl:flex gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 backdrop-blur-sm shadow-inner">
+                         <div className="flex flex-col items-center px-2">
+                             <span className="text-[10px] text-slate-400 uppercase">Mandiri</span>
+                             <span className="text-sm font-bold text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]">{kpi.mandiri}</span>
+                         </div>
+                         <div className="w-px bg-white/10 mx-1"></div>
+                         <div className="flex flex-col items-center px-2">
+                             <span className="text-[10px] text-slate-400 uppercase">Maju</span>
+                             <span className="text-sm font-bold text-blue-400 drop-shadow-[0_0_5px_rgba(96,165,250,0.5)]">{kpi.maju}</span>
+                         </div>
+                         <div className="w-px bg-white/10 mx-1"></div>
+                         <div className="flex flex-col items-center px-2">
+                             <span className="text-[10px] text-slate-400 uppercase">Berkembang</span>
+                             <span className="text-sm font-bold text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)]">{kpi.berkembang}</span>
+                         </div>
+                    </div>
+                )}
+                
+                <div className="flex items-center gap-2">
+                    <button onClick={() => setShowInfo(true)} 
+                        className="w-10 h-10 rounded-xl bg-slate-800/50 hover:bg-slate-700 border border-white/10 text-slate-300 hover:text-white transition flex items-center justify-center hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]" title="Metadata Info">
+                        <i className="fa-solid fa-circle-info"></i>
+                    </button>
+
+                    {view !== 'rpjmd' && (
+                        <button onClick={handleExport} 
+                            className="h-10 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border border-emerald-400/30 text-white text-xs font-bold transition flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transform hover:-translate-y-0.5">
+                            <i className="fa-solid fa-file-csv"></i> 
+                            <span className="hidden sm:inline">Export</span>
+                        </button>
+                    )}
+                </div>
+            </div>
+        </GlassCard>
         {showInfo && <InfoModal onClose={() => setShowInfo(false)} />}
     </>
   );
@@ -178,89 +251,76 @@ const Sidebar = ({
   data, 
   filterStatus, 
   setFilterStatus, 
-  searchTerm, 
-  setSearchTerm, 
   onSelect,
   showList
 }: { 
   data: VillageData[], 
   filterStatus: string, 
   setFilterStatus: (s: string) => void,
-  searchTerm: string,
-  setSearchTerm: (s: string) => void,
   onSelect: (v: VillageData) => void,
   showList: boolean
 }) => {
-  // Use local state for immediate input feedback
-  const [localSearch, setLocalSearch] = useState(searchTerm);
-
-  // Sync local state if parent state changes (e.g., clear search)
-  useEffect(() => {
-    setLocalSearch(searchTerm);
-  }, [searchTerm]);
-
-  // Debounce logic: Update parent searchTerm only after user stops typing for 300ms
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchTerm(localSearch);
-    }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [localSearch, setSearchTerm]);
-
   if (!showList) return null;
 
   return (
-    <aside className="w-72 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 z-10">
-      <div className="p-4 border-b border-slate-700">
-        <div className="relative">
-          <input 
-            type="text" 
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            placeholder="Cari Desa / Kecamatan..." 
-            className="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-xs text-white focus:border-blue-500 outline-none pl-8"
-          />
-          <i className="fa-solid fa-search absolute left-2.5 top-2.5 text-slate-500 text-xs"></i>
-        </div>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <button 
-            onClick={() => setFilterStatus('ALL')} 
-            className={`text-[10px] py-1 rounded transition ${filterStatus === 'ALL' ? 'bg-slate-600 text-white ring-2 ring-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-          >
-            Semua
-          </button>
-          <button 
-            onClick={() => setFilterStatus('MANDIRI')} 
-            className={`text-[10px] py-1 rounded transition border border-green-900 ${filterStatus === 'MANDIRI' ? 'bg-green-900/50 text-green-400 ring-2 ring-white' : 'bg-slate-900 text-green-400 hover:bg-green-900/20'}`}
-          >
-            Mandiri
-          </button>
-          <button 
-            onClick={() => setFilterStatus('MAJU')} 
-            className={`text-[10px] py-1 rounded transition border border-blue-900 ${filterStatus === 'MAJU' ? 'bg-blue-900/50 text-blue-400 ring-2 ring-white' : 'bg-slate-900 text-blue-400 hover:bg-blue-900/20'}`}
-          >
-            Maju
-          </button>
+    <GlassCard className="w-80 flex flex-col shrink-0 z-40 transition-all duration-500">
+      <div className="p-5 border-b border-white/10">
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Filter Status</h3>
+        
+        <div className="grid grid-cols-3 gap-2">
+          {['ALL', 'MANDIRI', 'MAJU'].map((status) => {
+              const active = filterStatus === status;
+              let colors = 'border-white/10 text-slate-400 hover:bg-white/5 hover:text-white';
+              
+              if (active) {
+                  if (status === 'ALL') {
+                      colors = 'bg-slate-600 text-white border-slate-400 shadow-[0_0_15px_rgba(148,163,184,0.4)] ring-1 ring-slate-400/50 scale-[1.02]';
+                  } else if (status === 'MANDIRI') {
+                      colors = 'bg-emerald-500/20 text-emerald-300 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)] ring-1 ring-emerald-400/50 scale-[1.02]';
+                  } else if (status === 'MAJU') {
+                      colors = 'bg-blue-500/20 text-blue-300 border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.5)] ring-1 ring-blue-400/50 scale-[1.02]';
+                  }
+              }
+
+              return (
+                  <button 
+                    key={status}
+                    onClick={() => setFilterStatus(status)} 
+                    className={`text-[10px] font-bold py-2 rounded-lg border transition-all duration-300 uppercase tracking-wide ${colors}`}
+                  >
+                    {status === 'ALL' ? 'Semua' : status}
+                  </button>
+              )
+          })}
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-2 space-y-1">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+        <div className="px-2 py-1 text-[10px] text-slate-500 uppercase tracking-wider flex justify-between">
+            <span>Daftar Desa</span>
+            <span>{data.length} Data</span>
+        </div>
         {data.map(d => (
-          <div key={d.id} onClick={() => onSelect(d)} className="p-2 hover:bg-slate-700/50 rounded cursor-pointer group">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-slate-200">{d.desa}</span>
-              <span className={`text-[10px] font-bold px-1.5 rounded ${d.status === 'MANDIRI' ? 'bg-green-900/30 text-green-400' : d.status === 'MAJU' ? 'bg-blue-900/30 text-blue-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+          <div key={d.id} onClick={() => onSelect(d)} 
+            className="p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 cursor-pointer group transition-all duration-200">
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-xs font-bold text-slate-200 group-hover:text-white transition">{d.desa}</span>
+              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${d.status === 'MANDIRI' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : d.status === 'MAJU' ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' : 'bg-amber-500/10 border-amber-500/20 text-amber-400'}`}>
                 {d.skor}
               </span>
             </div>
-            <div className="text-[10px] text-slate-500">{d.kec}</div>
+            <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                <i className="fa-solid fa-location-dot text-[8px]"></i> {d.kec}
+            </div>
           </div>
         ))}
+        {data.length === 0 && (
+            <div className="p-4 text-center text-slate-500 text-xs italic">
+                Tidak ada data desa yang ditemukan.
+            </div>
+        )}
       </div>
-    </aside>
+    </GlassCard>
   );
 };
 
@@ -268,58 +328,40 @@ const MapView = ({ data, onSelect }: { data: VillageData[], onSelect: (v: Villag
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markersGroup = useRef<any>(null);
-  const layersControl = useRef<any>(null);
 
   useEffect(() => {
-    if (!mapContainer.current) return;
-    if (!window.L) return;
+    if (!mapContainer.current || !window.L || mapInstance.current) return;
 
-    if (!mapInstance.current) {
-      // Base Layers
-      const darkBasemap = window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap, © CartoDB', maxZoom: 18
-      });
+    const darkBasemap = window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap, © CartoDB', maxZoom: 18
+    });
 
-      const satelliteBasemap = window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community', maxZoom: 18
-      });
+    mapInstance.current = window.L.map(mapContainer.current, { 
+        zoomControl: false,
+        attributionControl: false,
+        layers: [darkBasemap]
+    }).setView([-5.10, 105.60], 10);
 
-      const streetBasemap = window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxZoom: 18
-      });
+    const wmsLayer = window.L.tileLayer.wms('https://geoservices.big.go.id/rbi/rest/services/BATASWILAYAH/Administrasi_AR_KelDesa_10K/MapServer/WMSServer', {
+      layers: '0', format: 'image/png', transparent: true, version: '1.3.0'
+    });
+    wmsLayer.addTo(mapInstance.current);
 
-      mapInstance.current = window.L.map(mapContainer.current, { 
-          zoomControl: false,
-          layers: [darkBasemap] // Default layer
-      }).setView([-5.10, 105.60], 10);
-
-      // WMS Overlay
-      const wmsLayer = window.L.tileLayer.wms('https://geoservices.big.go.id/rbi/rest/services/BATASWILAYAH/Administrasi_AR_KelDesa_10K/MapServer/WMSServer', {
-        layers: '0', 
-        format: 'image/png',
-        transparent: true,
-        version: '1.3.0',
-        attribution: 'Badan Informasi Geospasial'
-      });
-      // Add overlay by default
-      wmsLayer.addTo(mapInstance.current);
-
-      // Layer Control
-      const baseMaps = {
-          "Dark Mode": darkBasemap,
-          "Satellite": satelliteBasemap,
-          "Street": streetBasemap
-      };
-
-      const overlayMaps = {
-          "Batas Administrasi (BIG)": wmsLayer
-      };
-
-      layersControl.current = window.L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(mapInstance.current);
-
-      window.L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
-      markersGroup.current = window.L.layerGroup().addTo(mapInstance.current);
+    if (window.L.markerClusterGroup) {
+        markersGroup.current = window.L.markerClusterGroup({
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true,
+          spiderfyOnMaxZoom: true,
+          removeOutsideVisibleBounds: true,
+          maxClusterRadius: 40,
+        }).addTo(mapInstance.current);
+    } else {
+        markersGroup.current = window.L.layerGroup().addTo(mapInstance.current);
     }
+
+    // Custom Zoom Control
+    window.L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
+
   }, []);
 
   useEffect(() => {
@@ -328,60 +370,62 @@ const MapView = ({ data, onSelect }: { data: VillageData[], onSelect: (v: Villag
     markersGroup.current.clearLayers();
     
     data.forEach(d => {
-      let color = d.status === 'MANDIRI' ? '#10B981' : (d.status === 'MAJU' ? '#0EA5E9' : '#F59E0B');
-      const marker = window.L.circleMarker([d.lat, d.lng], {
-        radius: 6, fillColor: color, color: "#fff", weight: 1, opacity: 0.8, fillOpacity: 0.7
+      // Glow colors for markers
+      const colorClass = d.status === 'MANDIRI' ? 'bg-emerald-500 shadow-[0_0_15px_#10b981]' 
+        : (d.status === 'MAJU' ? 'bg-blue-500 shadow-[0_0_15px_#3b82f6]' : 'bg-amber-500 shadow-[0_0_15px_#f59e0b]');
+      
+      const icon = window.L.divIcon({
+          className: '!bg-transparent !border-none',
+          html: `<div class="w-3.5 h-3.5 rounded-full border-2 border-slate-900 ${colorClass} transition-transform hover:scale-150"></div>`,
+          iconSize: [14, 14],
+          iconAnchor: [7, 7],
+          popupAnchor: [0, -7]
       });
+
+      const marker = window.L.marker([d.lat, d.lng], { icon });
       
-      // Enhanced Interactive Popup
-      const popupNode = document.createElement('div');
-      popupNode.className = "min-w-[200px]";
-      
-      popupNode.innerHTML = `
-        <div class="font-sans text-slate-200">
-            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">${d.kec}</div>
-            <div class="text-lg font-bold text-white mb-3 leading-tight">${d.desa}</div>
+      // Popup Content built with strings but styled with CSS classes injected below
+      const popupContent = `
+        <div class="font-sans min-w-[220px]">
+            <div class="flex items-center justify-between mb-2">
+                 <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest border border-slate-700 px-1.5 rounded">${d.kec}</span>
+            </div>
+            <div class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 mb-4 leading-tight">${d.desa}</div>
             
             <div class="grid grid-cols-2 gap-2 mb-4">
-                <div class="flex flex-col bg-slate-800/50 p-2 rounded border border-slate-700">
-                    <span class="text-[9px] text-slate-500 uppercase">Status</span>
-                    <span class="text-xs font-bold ${d.status === 'MANDIRI' ? 'text-green-400' : d.status === 'MAJU' ? 'text-blue-400' : 'text-yellow-400'}">${d.status}</span>
+                <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700/50 backdrop-blur-sm">
+                    <div class="text-[9px] text-slate-500 uppercase mb-0.5">Status</div>
+                    <div class="text-xs font-bold ${d.status === 'MANDIRI' ? 'text-emerald-400' : d.status === 'MAJU' ? 'text-blue-400' : 'text-amber-400'}">${d.status}</div>
                 </div>
-                <div class="flex flex-col bg-slate-800/50 p-2 rounded border border-slate-700">
-                    <span class="text-[9px] text-slate-500 uppercase">Skor IDM</span>
-                    <span class="text-xs font-mono font-bold text-white">${d.skor}</span>
+                <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700/50 backdrop-blur-sm">
+                    <div class="text-[9px] text-slate-500 uppercase mb-0.5">Skor IDM</div>
+                    <div class="text-xs font-mono font-bold text-white">${d.skor}</div>
                 </div>
             </div>
 
-            ${d.coordinateStatus === 'ESTIMATED' ? `
-            <div class="flex items-start gap-1.5 text-[9px] text-amber-500/80 bg-amber-900/10 p-2 rounded border border-amber-900/20 mb-3">
-                <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
-                <span class="leading-tight">Lokasi estimasi (Centroid).</span>
-            </div>` : ''}
+            <button id="btn-${d.id}" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold py-2.5 rounded-lg transition shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
+                <span>Lihat Detail</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
         </div>
       `;
 
-      const btn = document.createElement('button');
-      btn.className = "w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition-colors flex items-center justify-center gap-2 shadow-lg";
-      btn.innerHTML = '<span>Lihat Detail</span> <i class="fa-solid fa-arrow-right"></i>';
-      btn.onclick = (e) => {
-          e.stopPropagation();
-          onSelect(d);
-          marker.closePopup();
-      };
-      popupNode.appendChild(btn);
-
-      marker.bindPopup(popupNode, {
-          maxWidth: 240,
-          className: 'custom-popup-dark'
+      marker.bindPopup(popupContent, { maxWidth: 260, className: 'glass-popup' });
+      marker.on('popupopen', () => {
+          const btn = document.getElementById(`btn-${d.id}`);
+          if(btn) btn.onclick = () => onSelect(d);
       });
       
       // Tooltip
-      marker.bindTooltip(d.desa, {
-        direction: 'top', 
-        offset: [0, -5],
-        opacity: 0.9,
-        className: 'font-bold text-xs bg-slate-800 text-slate-200 border-slate-600 px-2 py-1' 
+      const tooltipContent = `
+        <div class="flex items-center gap-2 px-1">
+            <span class="w-2 h-2 rounded-full ${d.status === 'MANDIRI' ? 'bg-emerald-500' : d.status === 'MAJU' ? 'bg-blue-500' : 'bg-amber-500'} animate-pulse"></span>
+            <span class="font-bold text-slate-100 text-xs tracking-wide">${d.desa}</span>
+        </div>
+      `;
+
+      marker.bindTooltip(tooltipContent, { direction: 'top', offset: [0, -10], opacity: 1, className: 'glass-tooltip' });
+      marker.on('click', () => {
+          mapInstance.current.flyTo([d.lat, d.lng], 15, { duration: 1.5, easeLinearity: 0.25 });
       });
       
       marker.addTo(markersGroup.current);
@@ -389,74 +433,146 @@ const MapView = ({ data, onSelect }: { data: VillageData[], onSelect: (v: Villag
   }, [data, onSelect]);
 
   return (
-    <div className="flex-1 relative">
-      <div ref={mapContainer} className="w-full h-full z-0"></div>
-      <div className="absolute bottom-6 right-6 z-[500] bg-slate-800/90 backdrop-blur p-3 rounded-lg border border-slate-700 shadow-xl w-40">
-        <h4 className="text-[10px] font-bold text-slate-400 uppercase mb-2">Legenda</h4>
-        <div className="space-y-1 text-xs">
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500"></span> <span className="text-gray-300">Mandiri</span></div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span> <span className="text-gray-300">Maju</span></div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-yellow-500"></span> <span className="text-gray-300">Berkembang</span></div>
-        </div>
-        <div className="mt-2 pt-2 border-t border-slate-700 space-y-1 text-xs">
-             <div className="flex items-center gap-2"><span className="w-2 h-0.5 bg-gray-400"></span> <span className="text-gray-400 text-[10px]">Batas Admin (BIG)</span></div>
-        </div>
-        <div className="mt-3 pt-2 border-t border-slate-700">
-             <div className="text-[9px] text-slate-500 text-center">Sumber: Badan Informasi Geospasial</div>
+    <GlassCard className="flex-1 relative z-0 !bg-slate-900/80 !border-white/5">
+      <div ref={mapContainer} className="w-full h-full z-0 rounded-2xl"></div>
+      
+      {/* Floating Legend */}
+      <div className="absolute bottom-6 right-6 z-[400] bg-slate-900/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl w-48 animate-slide-up">
+        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 pb-2 border-b border-white/10">Status Desa</h4>
+        <div className="space-y-2.5">
+          <div className="flex items-center gap-3 group">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] group-hover:scale-125 transition"></span> 
+              <span className="text-xs text-slate-300 font-medium">Mandiri</span>
+          </div>
+          <div className="flex items-center gap-3 group">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6] group-hover:scale-125 transition"></span> 
+              <span className="text-xs text-slate-300 font-medium">Maju</span>
+          </div>
+          <div className="flex items-center gap-3 group">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_10px_#f59e0b] group-hover:scale-125 transition"></span> 
+              <span className="text-xs text-slate-300 font-medium">Berkembang</span>
+          </div>
         </div>
       </div>
-    </div>
+      
+      <style>{`
+        .glass-popup .leaflet-popup-content-wrapper {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(16px);
+            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .glass-popup .leaflet-popup-tip {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-tooltip {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #f1f5f9 !important;
+            border-radius: 8px !important;
+            padding: 6px 10px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+        }
+        .glass-tooltip:before { display: none; }
+      `}</style>
+    </GlassCard>
   );
 };
 
 const TableView = ({ data, onSelect }: { data: VillageData[], onSelect: (v: VillageData) => void }) => {
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+
+  const sortedData = useMemo(() => {
+    if (!sortConfig) return data;
+    return [...data].sort((a, b) => {
+      const getValue = (item: VillageData, path: string) => {
+          if (path.includes('.')) return path.split('.').reduce((acc: any, part) => acc && acc[part], item);
+          return item[path as keyof VillageData];
+      };
+      let aVal = getValue(a, sortConfig.key);
+      let bVal = getValue(b, sortConfig.key);
+      if (sortConfig.key === 'skor') {
+         aVal = parseFloat(String(aVal).replace(',', '.'));
+         bVal = parseFloat(String(bVal).replace(',', '.'));
+      }
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [data, sortConfig]);
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    setSortConfig({ key, direction });
+  };
+
+  const SortIcon = ({ column }: { column: string }) => {
+      if (sortConfig?.key !== column) return <i className="fa-solid fa-sort text-slate-600 ml-1.5 text-[10px]"></i>;
+      return <i className={`fa-solid fa-sort-${sortConfig.direction === 'asc' ? 'up' : 'down'} text-blue-400 ml-1.5`}></i>;
+  };
+
+  const Th = ({ label, column, className = "" }: { label: string, column: string, className?: string }) => (
+      <th className={`p-4 text-xs font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:text-white transition select-none ${className}`} onClick={() => handleSort(column)}>
+          <div className={`flex items-center gap-1 ${className.includes('text-center') ? 'justify-center' : ''}`}>
+            {label} <SortIcon column={column} />
+          </div>
+      </th>
+  );
+
   return (
-    <div className="flex-1 bg-slate-900 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-auto">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead className="bg-slate-800 text-slate-400 sticky top-0 z-10 shadow-md uppercase">
+    <GlassCard className="flex-1 flex flex-col overflow-hidden !bg-slate-900/60">
+      <div className="flex-1 overflow-auto custom-scrollbar">
+        <table className="w-full text-left border-collapse">
+          <thead className="sticky top-0 z-10 bg-slate-900/90 backdrop-blur-md shadow-md">
             <tr>
-              <th className="p-3 border-b border-slate-700">Kode</th>
-              <th className="p-3 border-b border-slate-700">Kecamatan</th>
-              <th className="p-3 border-b border-slate-700">Desa</th>
-              <th className="p-3 border-b border-slate-700 text-center">Status</th>
-              <th className="p-3 border-b border-slate-700 text-center font-bold text-white bg-slate-700/50">Skor</th>
-              <th className="p-3 border-b border-slate-700 text-center text-blue-400">DLD</th>
-              <th className="p-3 border-b border-slate-700 text-center text-purple-400">DS</th>
-              <th className="p-3 border-b border-slate-700 text-center text-green-400">DE</th>
-              <th className="p-3 border-b border-slate-700 text-center text-teal-400">DL</th>
-              <th className="p-3 border-b border-slate-700 text-center text-orange-400">DA</th>
-              <th className="p-3 border-b border-slate-700 text-center text-pink-400">TK</th>
-              <th className="p-3 border-b border-slate-700"></th>
+              <Th label="Kode" column="kode" />
+              <Th label="Kecamatan" column="kec" />
+              <Th label="Desa" column="desa" />
+              <Th label="Status" column="status" className="text-center" />
+              <Th label="Skor" column="skor" className="text-center" />
+              <Th label="DLD" column="dimensi.dld" className="text-center text-blue-400" />
+              <Th label="DS" column="dimensi.ds" className="text-center text-purple-400" />
+              <Th label="DE" column="dimensi.de" className="text-center text-emerald-400" />
+              <Th label="DL" column="dimensi.dl" className="text-center text-teal-400" />
+              <Th label="DA" column="dimensi.da" className="text-center text-orange-400" />
+              <Th label="TK" column="dimensi.dtkpd" className="text-center text-pink-400" />
+              <th className="p-4"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800 text-slate-300">
-            {data.map(d => (
-              <tr key={d.id} className="hover:bg-slate-800/50 border-b border-slate-800/50 transition">
-                <td className="p-4 text-slate-500">{d.kode}</td>
-                <td className="p-4 font-medium">{d.kec}</td>
-                <td className="p-4 font-bold text-white">{d.desa}</td>
+          <tbody className="divide-y divide-white/5">
+            {sortedData.map((d, idx) => (
+              <tr key={d.id} className={`hover:bg-white/5 transition duration-150 group ${idx % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+                <td className="p-4 text-slate-500 font-mono text-xs">{d.kode}</td>
+                <td className="p-4 text-xs font-medium text-slate-300">{d.kec}</td>
+                <td className="p-4 text-sm font-bold text-white group-hover:text-blue-300 transition">{d.desa}</td>
                 <td className="p-4 text-center">
-                  <span className={`px-2 py-0.5 rounded border text-[10px] font-bold ${d.status === 'MANDIRI' ? 'bg-green-900/30 text-green-400 border-green-900' : d.status === 'MAJU' ? 'bg-blue-900/30 text-blue-400 border-blue-900' : 'bg-yellow-900/30 text-yellow-400 border-yellow-900'}`}>
-                    {d.status}
-                  </span>
+                  <NeonBadge color={d.status === 'MANDIRI' ? 'green' : d.status === 'MAJU' ? 'blue' : 'amber'}>{d.status}</NeonBadge>
                 </td>
-                <td className="p-4 text-center font-mono font-bold text-white bg-slate-800 border-x border-slate-700">{d.skor}</td>
-                <td className="p-2 text-center text-blue-400">{d.dimensi.dld}</td>
-                <td className="p-2 text-center text-purple-400">{d.dimensi.ds}</td>
-                <td className="p-2 text-center text-green-400">{d.dimensi.de}</td>
-                <td className="p-2 text-center text-teal-400">{d.dimensi.dl}</td>
-                <td className="p-2 text-center text-orange-400">{d.dimensi.da}</td>
-                <td className="p-2 text-center text-pink-400">{d.dimensi.dtkpd}</td>
                 <td className="p-4 text-center">
-                   <button onClick={() => onSelect(d)} className="text-slate-400 hover:text-white"><i className="fa-solid fa-eye"></i></button>
+                    <span className="font-mono font-bold text-white bg-white/10 px-2 py-1 rounded border border-white/10">{d.skor}</span>
+                </td>
+                <td className="p-2 text-center text-xs text-blue-400/80 font-mono">{d.dimensi.dld}</td>
+                <td className="p-2 text-center text-xs text-purple-400/80 font-mono">{d.dimensi.ds}</td>
+                <td className="p-2 text-center text-xs text-emerald-400/80 font-mono">{d.dimensi.de}</td>
+                <td className="p-2 text-center text-xs text-teal-400/80 font-mono">{d.dimensi.dl}</td>
+                <td className="p-2 text-center text-xs text-orange-400/80 font-mono">{d.dimensi.da}</td>
+                <td className="p-2 text-center text-xs text-pink-400/80 font-mono">{d.dimensi.dtkpd}</td>
+                <td className="p-4 text-center">
+                   <button onClick={() => onSelect(d)} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-blue-600 hover:text-white text-slate-400 transition flex items-center justify-center">
+                       <i className="fa-solid fa-eye"></i>
+                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </GlassCard>
   );
 };
 
@@ -464,16 +580,15 @@ const StatsView = ({ data }: { data: VillageData[] }) => {
   const chartStatusRef = useRef<HTMLCanvasElement>(null);
   const chartDimRef = useRef<HTMLCanvasElement>(null);
   const chartKecRef = useRef<HTMLCanvasElement>(null);
-  
-  // Instance refs to destroy old charts
   const statusChart = useRef<any>(null);
   const dimChart = useRef<any>(null);
   const kecChart = useRef<any>(null);
 
   useEffect(() => {
     if (!window.Chart) return;
+    window.Chart.defaults.color = '#94a3b8';
+    window.Chart.defaults.font.family = "'Inter', sans-serif";
 
-    // 1. Status Doughnut
     if (statusChart.current) statusChart.current.destroy();
     const m = data.filter(x => x.status === 'MANDIRI').length;
     const ma = data.filter(x => x.status === 'MAJU').length;
@@ -486,29 +601,31 @@ const StatsView = ({ data }: { data: VillageData[] }) => {
                 labels: ['Mandiri', 'Maju', 'Berkembang'],
                 datasets: [{
                     data: [m, ma, b],
-                    backgroundColor: ['#10B981', '#0EA5E9', '#F59E0B'],
-                    borderWidth: 0
+                    backgroundColor: ['#10B981', '#3B82F6', '#F59E0B'],
+                    borderWidth: 0,
+                    hoverOffset: 10
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1' } } } }
+            options: { 
+                responsive: true, maintainAspectRatio: false, cutout: '70%',
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } } 
+            }
         });
     }
 
-    // 2. Dimensions Bar
     if (dimChart.current) dimChart.current.destroy();
-    // Calculate avgs
     const sums = { dld:0, ds:0, de:0, dl:0, da:0, dtkpd:0 };
     data.forEach(d => {
-        sums.dld += d.dimensi.dld;
-        sums.ds += d.dimensi.ds;
-        sums.de += d.dimensi.de;
-        sums.dl += d.dimensi.dl;
-        sums.da += d.dimensi.da;
-        sums.dtkpd += d.dimensi.dtkpd;
+        sums.dld += d.dimensi.dld; sums.ds += d.dimensi.ds; sums.de += d.dimensi.de;
+        sums.dl += d.dimensi.dl; sums.da += d.dimensi.da; sums.dtkpd += d.dimensi.dtkpd;
     });
     const len = data.length || 1;
     
     if (chartDimRef.current) {
+        const gradient = chartDimRef.current.getContext('2d')?.createLinearGradient(0,0,0,300);
+        gradient?.addColorStop(0, '#3b82f6');
+        gradient?.addColorStop(1, '#6366f1');
+
         dimChart.current = new window.Chart(chartDimRef.current, {
             type: 'bar',
             data: {
@@ -516,23 +633,22 @@ const StatsView = ({ data }: { data: VillageData[] }) => {
                 datasets: [{
                     label: 'Rata-rata Skor',
                     data: [sums.dld/len, sums.ds/len, sums.de/len, sums.dl/len, sums.da/len, sums.dtkpd/len],
-                    backgroundColor: '#3B82F6',
-                    borderRadius: 4
+                    backgroundColor: gradient || '#3B82F6',
+                    borderRadius: 6,
+                    barThickness: 24
                 }]
             },
             options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
+                responsive: true, maintainAspectRatio: false, 
                 plugins: { legend: { display: false } }, 
                 scales: { 
-                    y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }, 
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } } 
+                    y: { beginAtZero: true, grid: { color: '#ffffff10', drawBorder: false } }, 
+                    x: { grid: { display: false } } 
                 } 
             }
         });
     }
 
-    // 3. Kecamatan Ranking
     if (kecChart.current) kecChart.current.destroy();
     const kecStats: Record<string, {sum: number, count: number}> = {};
     data.forEach(d => {
@@ -545,429 +661,452 @@ const StatsView = ({ data }: { data: VillageData[] }) => {
         .sort((a,b)=>b.avg - a.avg);
 
     if (chartKecRef.current) {
+        const gradient = chartKecRef.current.getContext('2d')?.createLinearGradient(0,0,400,0);
+        gradient?.addColorStop(0, '#10b981');
+        gradient?.addColorStop(1, '#3b82f6');
+
         kecChart.current = new window.Chart(chartKecRef.current, {
             type: 'bar',
             data: {
                 labels: sortedKec.map(k=>k.name),
-                datasets: [{ label: 'Rata-rata Skor', data: sortedKec.map(k=>k.avg), backgroundColor: '#10B981', borderRadius: 4 }]
+                datasets: [{ label: 'Rata-rata Skor', data: sortedKec.map(k=>k.avg), backgroundColor: gradient || '#10B981', borderRadius: 4 }]
             },
             options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
+                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
                 scales: { 
-                    x: { ticks: { color: '#94A3B8', font: {size:9} }, grid: { display:false } }, 
-                    y: { min: 60, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } } 
+                    x: { min: 60, grid: { color: '#ffffff10' } }, 
+                    y: { grid: { display:false }, ticks: { font: { size: 10 } } } 
                 }, 
                 plugins: { legend: { display: false } } 
             }
         });
     }
-
   }, [data]);
 
   return (
-    <div className="flex-1 p-6 overflow-auto">
+    <div className="flex-1 p-2 overflow-auto custom-scrollbar">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="glass p-5 rounded-xl">
-                <h3 className="text-sm font-bold text-white mb-4">Sebaran Status IDM</h3>
+            <GlassCard className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Sebaran Status IDM</h3>
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center"><i className="fa-solid fa-chart-pie text-emerald-400"></i></div>
+                </div>
                 <div className="h-64"><canvas ref={chartStatusRef}></canvas></div>
-            </div>
-            <div className="glass p-5 rounded-xl">
-                <h3 className="text-sm font-bold text-white mb-4">Rata-rata Skor per Dimensi</h3>
+            </GlassCard>
+            <GlassCard className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Rata-rata Skor per Dimensi</h3>
+                    <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center"><i className="fa-solid fa-chart-simple text-blue-400"></i></div>
+                </div>
                 <div className="h-64"><canvas ref={chartDimRef}></canvas></div>
+            </GlassCard>
+        </div>
+        <GlassCard className="p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Peringkat Kecamatan (Skor Rata-rata)</h3>
+                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center"><i className="fa-solid fa-ranking-star text-purple-400"></i></div>
             </div>
-        </div>
-        <div className="glass p-5 rounded-xl">
-            <h3 className="text-sm font-bold text-white mb-4">Peringkat Kecamatan (Berdasarkan Rata-rata Skor)</h3>
-            <div className="h-80"><canvas ref={chartKecRef}></canvas></div>
-        </div>
+            <div className="h-96"><canvas ref={chartKecRef}></canvas></div>
+        </GlassCard>
     </div>
   );
+};
+
+const SyncStrategyView = () => {
+    return (
+        <div className="space-y-6 pb-10">
+            {/* Hero Alert */}
+            <GlassCard className="p-8 relative !bg-gradient-to-r !from-blue-900/40 !to-indigo-900/40 !border-blue-500/30">
+                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="relative z-10 flex flex-col md:flex-row gap-6 items-start">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/30">
+                        <i className="fa-solid fa-right-left text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-3">Sinkronisasi RPJMD dengan Indeks Desa (6 Dimensi)</h2>
+                        <p className="text-blue-100/80 text-sm leading-relaxed max-w-3xl">
+                            Transformasi strategis dari IDM (3 Pilar) menuju <strong>Indeks Desa</strong> (Permendes PDTT No. 9/2024). Dokumen ini memandu penyesuaian indikator kinerja pembangunan desa untuk memastikan kepatuhan regulasi dan keberlanjutan target.
+                        </p>
+                    </div>
+                </div>
+            </GlassCard>
+
+            {/* 6 Dimensions Grid */}
+            <GlassCard className="p-6">
+                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
+                    <div className="w-1.5 h-6 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-full"></div>
+                    Matriks Transformasi Indikator
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[
+                        { name: "Layanan Dasar", icon: "fa-hand-holding-medical", desc: "Pendidikan, kesehatan, utilitas dasar", color: "blue" },
+                        { name: "Sosial", icon: "fa-users", desc: "Aktivitas masyarakat, solidaritas", color: "purple" },
+                        { name: "Ekonomi", icon: "fa-chart-line", desc: "Produksi, pasar, keuangan desa", color: "emerald" },
+                        { name: "Lingkungan", icon: "fa-leaf", desc: "Sampah, limbah, kebencanaan", color: "teal" },
+                        { name: "Aksesibilitas", icon: "fa-road", desc: "Jalan, transportasi, listrik, internet", color: "amber", highlight: true },
+                        { name: "Tata Kelola", icon: "fa-gavel", desc: "Transparansi, akuntabilitas, layanan", color: "rose", highlight: true },
+                    ].map((dim, idx) => (
+                        <div key={idx} className={`relative p-5 rounded-xl border transition group hover:bg-white/5 ${dim.highlight ? 'bg-amber-500/5 border-amber-500/30' : 'bg-white/5 border-white/5'}`}>
+                            {dim.highlight && <span className="absolute top-3 right-3 text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/20">BARU</span>}
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-lg bg-${dim.color}-500/20 text-${dim.color}-400 shadow-[0_0_15px_rgba(0,0,0,0.2)]`}>
+                                <i className={`fa-solid ${dim.icon}`}></i>
+                            </div>
+                            <h4 className="text-sm font-bold text-white mb-1">{dim.name}</h4>
+                            <p className="text-xs text-slate-400">{dim.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </GlassCard>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Options */}
+                <GlassCard className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
+                        <div className="w-1.5 h-6 bg-gradient-to-b from-emerald-400 to-green-500 rounded-full"></div>
+                        Opsi Strategis
+                    </h3>
+                    <div className="space-y-4">
+                         <div className="p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition cursor-pointer">
+                            <div className="flex justify-between items-start mb-2">
+                                <h4 className="text-sm font-bold text-white">Opsi 1: Transisi Administrasi</h4>
+                                <NeonBadge color="blue">CEPAT</NeonBadge>
+                            </div>
+                            <p className="text-xs text-slate-400 leading-relaxed">Penerbitan SK Kepala Daerah (Bridging) dan penggunaan dua lajur pengukuran selama 1 tahun.</p>
+                         </div>
+                         <div className="p-5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 transition cursor-pointer relative overflow-hidden">
+                            <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-500 text-white text-[9px] font-bold rounded-bl-xl shadow-lg">REKOMENDASI</div>
+                            <h4 className="text-sm font-bold text-white mb-2">Opsi 2: Revisi Perda RPJMD</h4>
+                            <p className="text-xs text-slate-400 leading-relaxed mb-3">Perubahan formal dokumen RPJMD 2025-2029 (Pasal 342 Permendagri 86/2017) untuk audit-proof.</p>
+                            <div className="flex gap-2 text-[10px] text-emerald-400 font-bold">
+                                <span><i className="fa-solid fa-check"></i> Audit Kinerja Aman</span>
+                                <span><i className="fa-solid fa-check"></i> Konsisten RPJPN</span>
+                            </div>
+                         </div>
+                    </div>
+                </GlassCard>
+
+                {/* Timeline */}
+                <GlassCard className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
+                        <div className="w-1.5 h-6 bg-gradient-to-b from-purple-400 to-pink-500 rounded-full"></div>
+                        Roadmap 90 Hari
+                    </h3>
+                    <div className="space-y-0 pl-2">
+                        {[
+                            { step: "1", title: "SK Kepala Daerah", desc: "Penetapan kebijakan transisi (Permendes 9/2024)", lead: "Bappeda" },
+                            { step: "2", title: "Crosswalk Indikator", desc: "Pemetaan gap indikator lama vs baru", lead: "Bappeda & OPD" },
+                            { step: "3", title: "Baseline 2025", desc: "Pengambilan data baseline & target 2026", lead: "DPMD" },
+                            { step: "4", title: "Integrasi SIPD", desc: "Update kode program Renja OPD", lead: "TAPD" },
+                        ].map((item, i) => (
+                            <div key={i} className="flex gap-4 pb-6 last:pb-0 relative">
+                                <div className="absolute top-0 left-3.5 bottom-0 w-px bg-white/10 -z-10 last:hidden"></div>
+                                <div className="w-7 h-7 rounded-full bg-slate-800 border border-white/20 flex items-center justify-center text-xs font-bold text-white shadow-lg shrink-0 z-10">
+                                    {item.step}
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-bold text-white">{item.title}</h4>
+                                    <p className="text-xs text-slate-400 mb-1">{item.desc}</p>
+                                    <span className="text-[9px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">{item.lead}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </GlassCard>
+            </div>
+        </div>
+    );
 };
 
 const RpjmdView = () => {
-  const [filterMission, setFilterMission] = useState<string>('ALL');
+  const [activeTab, setActiveTab] = useState<'matrix' | 'sync'>('matrix');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const filteredPrograms = useMemo(() => {
-    if (filterMission === 'ALL') return rpjmdPrograms;
-    return rpjmdPrograms.filter(p => p.missionId.toString() === filterMission);
-  }, [filterMission]);
+  const toggleExpand = (id: string) => {
+    setExpandedId(prev => prev === id ? null : id);
+  }
 
   return (
-    <div className="flex-1 p-6 overflow-auto bg-slate-900">
-       {/* Quick Wins Section */}
-       <div className="mb-8">
-         <div className="flex items-center gap-2 mb-4">
-            <div className="bg-green-500/20 p-2 rounded-lg text-green-400"><i className="fa-solid fa-bolt"></i></div>
-            <h2 className="text-xl font-bold text-white">Program Hasil Terbaik Cepat (Quick Wins)</h2>
-         </div>
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quickWins.map((win, idx) => (
-                <div key={idx} className="bg-slate-800/50 border border-slate-700 p-4 rounded-xl flex items-start gap-3 hover:bg-slate-800 transition group">
-                    <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg group-hover:bg-blue-500 group-hover:text-white transition-colors shrink-0">
-                        <i className={`fa-solid ${win.icon}`}></i>
-                    </div>
-                    <div>
-                        <span className="text-sm font-bold text-slate-200 block mb-0.5">{win.title}</span>
-                        <span className="text-[11px] text-slate-400 leading-tight block">{win.desc}</span>
+    <div className="flex-1 overflow-auto custom-scrollbar p-2">
+        {/* Header Tab Switcher */}
+        <GlassCard className="mb-6 p-2 flex justify-between items-center sticky top-0 z-30">
+            <div className="px-4">
+                <h1 className="text-lg font-bold text-white">E-RPJMD 2025-2029</h1>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Monitoring & Evaluasi</p>
+            </div>
+            <div className="flex bg-black/20 rounded-xl p-1">
+                <button onClick={() => setActiveTab('matrix')} className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${activeTab === 'matrix' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+                    <i className="fa-solid fa-list-check"></i> Matrix
+                </button>
+                <button onClick={() => setActiveTab('sync')} className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 ${activeTab === 'sync' ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+                    <i className="fa-solid fa-rotate"></i> Sinkronisasi
+                </button>
+            </div>
+        </GlassCard>
+
+        {activeTab === 'sync' ? (
+            <SyncStrategyView />
+        ) : (
+            <div className="space-y-8 animate-fade-in pb-10">
+                {/* Quick Wins */}
+                <div>
+                    <h2 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 flex items-center gap-2 px-1">
+                        <i className="fa-solid fa-bolt"></i> Program Unggulan (Quick Wins)
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {quickWins.map((qw, idx) => (
+                            <GlassCard key={idx} className="p-5 hover" hover={true}>
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 flex items-center justify-center text-lg border border-white/5">
+                                        <i className={`fa-solid ${qw.icon}`}></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-white mb-1">{qw.title}</h3>
+                                        <p className="text-xs text-slate-400 leading-relaxed">{qw.desc}</p>
+                                    </div>
+                                </div>
+                            </GlassCard>
+                        ))}
                     </div>
                 </div>
-            ))}
-         </div>
-       </div>
 
-       {/* Matrix Filter */}
-       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-             <i className="fa-solid fa-list-check text-blue-500"></i> Matriks Kinerja RPJMD 2025-2029
-          </h2>
-          <select 
-            className="bg-slate-800 text-slate-200 text-xs sm:text-sm rounded-lg border border-slate-600 p-2.5 focus:ring-blue-500 focus:border-blue-500 outline-none min-w-[240px]"
-            value={filterMission}
-            onChange={(e) => setFilterMission(e.target.value)}
-          >
-            <option value="ALL">Semua Misi Pembangunan</option>
-            {missions.map(m => (
-                <option key={m.id} value={m.id.toString()}>Misi {m.id}: {m.title}</option>
-            ))}
-          </select>
-       </div>
+                {/* Programs */}
+                <div>
+                    <h2 className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4 flex items-center gap-2 px-1">
+                        <i className="fa-solid fa-bullseye"></i> Target Kinerja & Anggaran
+                    </h2>
+                    <div className="space-y-6">
+                        {rpjmdPrograms.map((prog) => {
+                             const years = [2026, 2027, 2028, 2029, 2030];
+                             const budgets = years.map(y => prog.targets[y].pagu);
+                             const maxBudget = Math.max(...budgets);
+                             const isExpanded = expandedId === prog.id;
 
-       {/* Matrix Content */}
-       <div className="space-y-4">
-         {filteredPrograms.map(prog => (
-             <div key={prog.id} className="bg-slate-800/30 border border-slate-700 rounded-xl overflow-hidden hover:bg-slate-800/50 transition group">
-                 <div className="p-4 sm:p-5">
-                    <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Left: Program Info */}
-                        <div className="flex-1">
-                            <div className="flex items-start justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-bold bg-blue-900/30 text-blue-400 px-2 py-0.5 rounded border border-blue-800/50">
-                                        MISI {prog.missionId}
-                                    </span>
-                                    {prog.isQuickWin && (
-                                        <span className="text-[10px] font-bold bg-green-900/30 text-green-400 px-2 py-0.5 rounded border border-green-800/50 flex items-center gap-1">
-                                            <i className="fa-solid fa-bolt text-[9px]"></i> QUICK WIN
-                                        </span>
+                             return (
+                                <GlassCard key={prog.id} className="overflow-visible transition-all duration-300">
+                                    <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between gap-4 relative">
+                                        <div className="flex-1 pr-10">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="bg-white/10 text-white text-[9px] px-2 py-0.5 rounded font-mono">{prog.id}</span>
+                                                {prog.isQuickWin && <NeonBadge color="amber">UNGGULAN</NeonBadge>}
+                                                <span className="text-[10px] text-slate-400 uppercase tracking-wide">{prog.opd}</span>
+                                            </div>
+                                            <h3 className="text-lg font-bold text-white mb-1">{prog.program}</h3>
+                                            <p className="text-xs text-slate-400"><span className="text-slate-500 font-semibold">Indikator:</span> {prog.indicator}</p>
+                                        </div>
+                                        <div className="text-right hidden md:block">
+                                            <div className="text-[10px] text-slate-500 uppercase mb-1">Baseline 2024</div>
+                                            <div className="text-2xl font-bold text-white font-mono">{prog.baseline2024}</div>
+                                        </div>
+                                        
+                                        {/* Toggle Button */}
+                                        <button 
+                                            onClick={() => toggleExpand(prog.id)}
+                                            className={`absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all duration-300 text-slate-300 hover:text-white ${isExpanded ? 'rotate-180 bg-white/10' : ''}`}
+                                        >
+                                            <i className="fa-solid fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+
+                                    {/* Expanded Detail View */}
+                                    {isExpanded && (
+                                        <div className="p-6 border-b border-white/5 bg-black/20 grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in relative z-10">
+                                            <div>
+                                                <h4 className="text-[10px] font-bold text-blue-400 uppercase mb-2 tracking-widest flex items-center gap-2">
+                                                    <i className="fa-solid fa-file-lines"></i> Deskripsi Program
+                                                </h4>
+                                                <p className="text-xs text-slate-300 leading-relaxed bg-white/5 p-3 rounded-lg border border-white/5">
+                                                    Program strategis yang dilaksanakan oleh <strong>{prog.opd}</strong>. 
+                                                    Bertujuan untuk meningkatkan <em>{prog.indicator.toLowerCase()}</em> sebagai bagian dari pencapaian Misi {prog.missionId} RPJMD 2025-2029.
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-[10px] font-bold text-emerald-400 uppercase mb-2 tracking-widest flex items-center gap-2">
+                                                    <i className="fa-solid fa-crosshairs"></i> Target Spesifik
+                                                </h4>
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between items-center bg-white/5 p-2 rounded border border-white/5">
+                                                        <span className="text-[10px] text-slate-400">Target Akhir (2030)</span>
+                                                        <span className="text-sm font-bold text-white">{prog.targets[2030].target}</span>
+                                                    </div>
+                                                    <div className="flex justify-between items-center bg-white/5 p-2 rounded border border-white/5">
+                                                        <span className="text-[10px] text-slate-400">Target Terdekat (2026)</span>
+                                                        <span className="text-sm font-bold text-white">{prog.targets[2026].target}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-[10px] font-bold text-amber-400 uppercase mb-2 tracking-widest flex items-center gap-2">
+                                                    <i className="fa-solid fa-spinner"></i> Capaian Aktual
+                                                </h4>
+                                                <div className="bg-white/5 p-3 rounded-lg border border-white/5">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-xs text-slate-300">Status</span>
+                                                        <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">ON TRACK</span>
+                                                    </div>
+                                                    <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden mb-2">
+                                                        <div className="h-full bg-gradient-to-r from-amber-500 to-orange-500 w-[35%] rounded-full relative">
+                                                            <div className="absolute top-0 right-0 bottom-0 w-2 bg-white/20 animate-pulse"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex justify-between text-[10px] text-slate-500">
+                                                        <span>Basis: {prog.baseline2024}</span>
+                                                        <span>Menuju: {prog.targets[2026].target}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     )}
-                                </div>
-                            </div>
-                            <h3 className="text-base font-bold text-white mb-1">{prog.program}</h3>
-                            <p className="text-xs text-slate-400 flex items-center gap-1.5 mb-3">
-                                <i className="fa-solid fa-building-columns text-[10px]"></i> {prog.opd}
-                            </p>
-                            
-                            <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700/50">
-                                <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 font-semibold">Indikator Kinerja</p>
-                                <p className="text-sm text-slate-200 font-medium">{prog.indicator}</p>
-                            </div>
-                        </div>
 
-                        {/* Right: Targets & Budget */}
-                        <div className="lg:w-1/2 flex flex-col gap-3">
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-slate-900/40 p-3 rounded-lg border border-slate-700/30">
-                                    <p className="text-[10px] text-slate-500 uppercase mb-1">Kondisi Awal (2024)</p>
-                                    <p className="text-lg font-bold text-white">{prog.baseline2024}</p>
-                                </div>
-                                <div className="bg-slate-900/40 p-3 rounded-lg border border-slate-700/30">
-                                    <p className="text-[10px] text-slate-500 uppercase mb-1">Target Akhir (2030)</p>
-                                    <p className="text-lg font-bold text-green-400">{prog.targets[2030].target}</p>
-                                </div>
-                            </div>
-                            
-                            <div className="mt-auto">
-                                <div className="flex justify-between items-end mb-2">
-                                    <p className="text-[10px] text-slate-400 uppercase font-semibold">Proyeksi Anggaran (5 Tahun)</p>
-                                    <p className="text-sm font-mono font-bold text-blue-300">
-                                        {fmtMoney(Object.values(prog.targets).reduce((sum: number, t: any) => sum + t.pagu, 0))}
-                                    </p>
-                                </div>
-                                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden flex">
-                                    {Object.entries(prog.targets).map(([year, t]: [string, any], idx) => (
-                                        <div 
-                                            key={year} 
-                                            className={`h-full ${idx%2===0 ? 'bg-blue-500' : 'bg-blue-600'}`} 
-                                            style={{width: '20%'}} 
-                                            title={`Tahun ${year}: ${fmtMoney(t.pagu)}`}
-                                        ></div>
-                                    ))}
-                                </div>
-                                <div className="flex justify-between text-[9px] text-slate-600 mt-1 font-mono">
-                                    <span>2026</span><span>2027</span><span>2028</span><span>2029</span><span>2030</span>
-                                </div>
-                            </div>
-                        </div>
+                                    <div className="p-6 bg-black/10">
+                                        <div className="grid grid-cols-5 gap-2 md:gap-4">
+                                            {years.map(year => {
+                                                const t = prog.targets[year];
+                                                const heightPct = (t.pagu / maxBudget) * 100;
+                                                return (
+                                                    <div key={year} className="flex flex-col items-center group relative">
+                                                        <div className="mb-2 bg-slate-800 border border-slate-600 rounded-full px-2 py-0.5 text-[10px] font-bold text-slate-300 shadow-sm z-10 group-hover:scale-110 transition group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-500">
+                                                            {t.target}
+                                                        </div>
+                                                        <div className="w-full h-24 bg-white/5 rounded-t-lg relative flex items-end justify-center overflow-visible">
+                                                            <div 
+                                                                className="w-full mx-1 bg-gradient-to-t from-blue-600 to-indigo-500 opacity-80 hover:opacity-100 rounded-t transition-all duration-500 relative group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)]"
+                                                                style={{ height: `${heightPct}%` }}
+                                                            >
+                                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 bg-slate-900/95 backdrop-blur-xl text-white text-xs rounded-xl p-3 border border-white/10 shadow-2xl opacity-0 group-hover:opacity-100 transition-all z-50 pointer-events-none scale-90 group-hover:scale-100 origin-bottom">
+                                                                    <div className="text-[10px] text-slate-400 mb-1 font-bold uppercase tracking-wider text-center">{year}</div>
+                                                                    <div className="flex justify-between items-center py-1 border-b border-white/10">
+                                                                        <span className="text-slate-400">Target</span>
+                                                                        <span className="font-bold text-emerald-400">{t.target}</span>
+                                                                    </div>
+                                                                    <div className="flex justify-between items-center py-1">
+                                                                        <span className="text-slate-400">Pagu</span>
+                                                                        <span className="font-mono text-amber-400 text-[10px]">{fmtMoney(t.pagu)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="mt-2 text-[10px] font-mono text-slate-500 w-full text-center pt-1 border-t border-white/5 group-hover:text-blue-400 transition">
+                                                            {year}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </GlassCard>
+                             );
+                        })}
                     </div>
-                 </div>
-             </div>
-         ))}
-       </div>
+                </div>
+            </div>
+        )}
     </div>
   );
 };
 
-const DetailModal = ({ d, onClose }: { d: VillageData, onClose: () => void }) => {
-  const [activeTab, setActiveTab] = useState<'summary' | 'dimensions' | 'indicators'>('summary');
+// Main App Component
+const App = () => {
+  const [data, setData] = useState<VillageData[]>([]);
+  const [view, setView] = useState('map'); 
+  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedVillage, setSelectedVillage] = useState<VillageData | null>(null);
 
-  // Grouping configuration with dynamic offset calculation
-  const dimensions = useMemo(() => {
-      const rawDims = [
-          { id: 'dld', name: 'Layanan Dasar (DLD)', color: 'bg-blue-500', text: 'text-blue-400', items: d.indikator.dld, score: d.dimensi.dld },
-          { id: 'ds', name: 'Sosial (DS)', color: 'bg-purple-500', text: 'text-purple-400', items: d.indikator.ds, score: d.dimensi.ds },
-          { id: 'de', name: 'Ekonomi (DE)', color: 'bg-green-500', text: 'text-green-400', items: d.indikator.de, score: d.dimensi.de },
-          { id: 'dl', name: 'Lingkungan (DL)', color: 'bg-teal-500', text: 'text-teal-400', items: d.indikator.dl, score: d.dimensi.dl }, 
-          { id: 'da', name: 'Aksesibilitas (DA)', color: 'bg-orange-500', text: 'text-orange-400', items: d.indikator.da, score: d.dimensi.da }, 
-          { id: 'dtkpd', name: 'Tata Kelola (TK)', color: 'bg-pink-500', text: 'text-pink-400', items: d.indikator.dtkpd, score: d.dimensi.dtkpd },
-      ];
+  useEffect(() => { setData(getProcessedData()); }, []);
 
-      let currentOffset = 0;
-      return rawDims.map(dim => {
-          const offset = currentOffset;
-          currentOffset += dim.items.length;
-          return { ...dim, offset };
-      });
-  }, [d]);
+  const filteredData = useMemo(() => {
+    return data.filter(d => {
+      const matchStatus = filterStatus === 'ALL' || d.status === filterStatus;
+      const matchSearch = searchTerm === '' || d.desa.toLowerCase().includes(searchTerm.toLowerCase()) || d.kec.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchStatus && matchSearch;
+    });
+  }, [data, filterStatus, searchTerm]);
+
+  const kpi = useMemo(() => ({
+    mandiri: data.filter(d => d.status === 'MANDIRI').length,
+    maju: data.filter(d => d.status === 'MAJU').length,
+    berkembang: data.filter(d => d.status === 'BERKEMBANG').length,
+  }), [data]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-        <div className="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-5xl shadow-2xl flex flex-col max-h-[90vh] transform transition-all">
-            
-            {/* Header */}
-            <div className="p-4 border-b border-slate-700 flex justify-between items-start bg-slate-900/50 rounded-t-xl shrink-0">
-                <div>
-                    <h2 className="text-lg font-bold text-white">{d.desa}</h2>
-                    <p className="text-xs text-slate-400 uppercase tracking-wide">{d.kec} <span className="mx-1">•</span> {d.kode}</p>
-                </div>
-                <button onClick={onClose} className="text-slate-400 hover:text-white p-1 hover:bg-slate-700 rounded-full transition"><i className="fa-solid fa-xmark text-lg"></i></button>
-            </div>
+    <div className="relative h-screen w-screen overflow-hidden bg-[#0f172a] text-slate-100 font-inter selection:bg-blue-500/30">
+        {/* Animated Background Orbs */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-600/20 blur-[100px] animate-blob mix-blend-screen"></div>
+            <div className="absolute top-[-10%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-purple-600/20 blur-[100px] animate-blob animation-delay-2000 mix-blend-screen"></div>
+            <div className="absolute bottom-[-10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-emerald-600/20 blur-[100px] animate-blob animation-delay-4000 mix-blend-screen"></div>
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+        </div>
 
-            {/* Tab Navigation */}
-            <div className="flex border-b border-slate-700 bg-slate-800/50">
-                <button 
-                    onClick={() => setActiveTab('summary')}
-                    className={`flex-1 py-3 text-xs font-bold tracking-wide uppercase transition flex items-center justify-center gap-2 ${activeTab === 'summary' ? 'text-white border-b-2 border-blue-500 bg-slate-700/30' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/10'}`}
-                >
-                    <i className="fa-solid fa-clipboard-list"></i> Ringkasan
-                </button>
-                <button 
-                    onClick={() => setActiveTab('dimensions')}
-                    className={`flex-1 py-3 text-xs font-bold tracking-wide uppercase transition flex items-center justify-center gap-2 ${activeTab === 'dimensions' ? 'text-white border-b-2 border-blue-500 bg-slate-700/30' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/10'}`}
-                >
-                    <i className="fa-solid fa-layer-group"></i> Dimensi
-                </button>
-                <button 
-                    onClick={() => setActiveTab('indicators')}
-                    className={`flex-1 py-3 text-xs font-bold tracking-wide uppercase transition flex items-center justify-center gap-2 ${activeTab === 'indicators' ? 'text-white border-b-2 border-blue-500 bg-slate-700/30' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/10'}`}
-                >
-                    <i className="fa-solid fa-list-check"></i> Indikator
-                </button>
-            </div>
+        {/* Floating Layout */}
+        <div className="relative z-10 h-full flex flex-col p-4 gap-4 max-w-[1920px] mx-auto">
+            <Navbar 
+                kpi={kpi} 
+                data={filteredData} 
+                view={view} 
+                setView={setView} 
+                searchTerm={searchTerm} 
+                setSearchTerm={setSearchTerm} 
+            />
             
-            <div className="p-5 overflow-y-auto custom-scrollbar bg-slate-900/30 flex-1">
+            <div className="flex flex-1 gap-4 overflow-hidden">
+                {(view === 'map' || view === 'table') && (
+                    <Sidebar 
+                        data={filteredData} 
+                        filterStatus={filterStatus} 
+                        setFilterStatus={setFilterStatus}
+                        onSelect={setSelectedVillage} 
+                        showList={true}
+                    />
+                )}
                 
-                {/* Tab Content: Summary */}
-                {activeTab === 'summary' && (
-                    <div className="space-y-6 animate-slide-in">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700/50 text-center shadow-sm hover:border-slate-600 transition">
-                                <div className="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center mx-auto mb-3 text-slate-400">
-                                    <i className="fa-solid fa-award text-lg"></i>
-                                </div>
-                                <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Status IDM</p>
-                                <p className={`text-2xl font-extrabold ${d.status === 'MANDIRI' ? 'text-green-500' : d.status === 'MAJU' ? 'text-blue-500' : 'text-yellow-500'}`}>{d.status}</p>
-                            </div>
-                            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700/50 text-center shadow-sm hover:border-slate-600 transition">
-                                <div className="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center mx-auto mb-3 text-slate-400">
-                                    <i className="fa-solid fa-chart-line text-lg"></i>
-                                </div>
-                                <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Skor Total</p>
-                                <p className="text-2xl font-extrabold text-white">{d.skor}</p>
-                            </div>
-                            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700/50 text-center shadow-sm hover:border-slate-600 transition">
-                                <div className="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center mx-auto mb-3 text-slate-400">
-                                    <i className="fa-solid fa-fingerprint text-lg"></i>
-                                </div>
-                                <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Kode Wilayah</p>
-                                <p className="text-2xl font-mono font-bold text-white">{d.kode}</p>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-gradient-to-br from-blue-900/20 to-slate-800/50 border border-blue-800/30 rounded-xl p-5 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500/10 rounded-full blur-xl"></div>
-                            <h4 className="text-sm font-bold text-blue-300 mb-3 flex items-center gap-2"><i className="fa-solid fa-circle-info"></i> Informasi Desa</h4>
-                            <p className="text-sm text-slate-300 leading-relaxed">
-                                Desa <strong>{d.desa}</strong> secara administratif berada di Kecamatan {d.kec}. 
-                                Berdasarkan penilaian Indeks Desa Membangun (IDM) tahun 2025, desa ini diklasifikasikan sebagai desa <strong>{d.status}</strong> dengan skor akhir <strong>{d.skor}</strong>. 
-                                Pencapaian ini mencerminkan ketersediaan akses layanan dasar, infrastruktur, serta tata kelola pemerintahan yang {d.status === 'MANDIRI' ? 'sangat optimal dan berkelanjutan' : d.status === 'MAJU' ? 'sudah baik namun perlu ditingkatkan' : 'sedang berkembang menuju kemandirian'}.
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Tab Content: Dimensions */}
-                {activeTab === 'dimensions' && (
-                    <div className="space-y-4 animate-slide-in">
-                        {dimensions.map((dim) => (
-                            <div key={dim.id} className="bg-slate-800 p-4 rounded-xl border border-slate-700/60 hover:border-slate-600 transition">
-                                <div className="flex justify-between items-end mb-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded-lg ${dim.color} bg-opacity-20 flex items-center justify-center`}>
-                                            <span className={`font-bold ${dim.text} text-xs`}>{dim.name.match(/\(([^)]+)\)/)?.[1]}</span>
-                                        </div>
-                                        <h5 className={`text-sm font-bold text-slate-200`}>{dim.name.split('(')[0]}</h5>
-                                    </div>
-                                    <span className="text-lg font-bold text-white">{dim.score}</span>
-                                </div>
-                                {/* Visualization bar relative to a hypothetical max score */}
-                                <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700/30">
-                                    <div className={`${dim.color} h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.3)]`} style={{width: `${Math.min(100, (dim.score / 170) * 100)}%`}}></div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* Tab Content: Indicators */}
-                {activeTab === 'indicators' && (
-                    <div className="space-y-8 animate-slide-in">
-                        {dimensions.map((dim) => (
-                            <div key={dim.id}>
-                                <div className="flex items-center gap-2 mb-3 sticky top-0 bg-slate-800/95 backdrop-blur py-2 z-10 border-b border-slate-700/50">
-                                    <div className={`w-2.5 h-2.5 rounded-full ${dim.color} shadow-[0_0_8px_currentColor]`}></div>
-                                    <h5 className={`text-xs font-bold uppercase tracking-widest ${dim.text}`}>{dim.name}</h5>
-                                </div>
-                                
-                                {/* Compact Grid */}
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                    {dim.items.map((val, i) => {
-                                        const globalIdx = dim.offset + i;
-                                        const name = INDICATOR_NAMES[globalIdx] || `Indikator ${globalIdx + 1}`;
-                                        const v = Math.min(5, Math.max(1, Math.round(val)));
-                                        const barColor = v >= 4 ? 'bg-green-500' : (v >= 3 ? 'bg-blue-500' : 'bg-yellow-500');
-                                        const scoreColor = v >= 4 ? 'text-green-400 border-green-900/50 bg-green-900/20' : (v >= 3 ? 'text-blue-400 border-blue-900/50 bg-blue-900/20' : 'text-yellow-400 border-yellow-900/50 bg-yellow-900/20');
-                                        
-                                        return (
-                                            <div key={i} className="bg-slate-900/60 p-3 rounded-lg border border-slate-700/40 hover:border-slate-600 hover:bg-slate-800/60 transition-all group flex flex-col justify-between h-full relative overflow-hidden">
-                                                <div className="flex justify-between items-start mb-2 gap-2">
-                                                    <span className="text-[11px] text-slate-400 group-hover:text-slate-200 font-medium leading-tight line-clamp-2" title={name}>
-                                                        {name}
-                                                    </span>
-                                                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${scoreColor} shrink-0`}>
-                                                        {v}
-                                                    </span>
-                                                </div>
-                                                <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden mt-auto border border-slate-800">
-                                                    <div className={`${barColor} h-full rounded-full transition-all duration-500`} style={{width: `${v*20}%`}}></div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <main className="flex-1 relative flex flex-col min-w-0 animate-fade-in-up">
+                    {view === 'map' && <MapView data={filteredData} onSelect={setSelectedVillage} />}
+                    {view === 'table' && <TableView data={filteredData} onSelect={setSelectedVillage} />}
+                    {view === 'stats' && <StatsView data={data} />}
+                    {view === 'rpjmd' && <RpjmdView />}
+                </main>
             </div>
         </div>
+        
+        {/* Global Styles for Animations */}
         <style>{`
-            .animate-fade-in { animation: fadeIn 0.2s ease-out; }
-            .animate-slide-in { animation: slideIn 0.3s ease-out; }
-            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-            @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes blob {
+                0% { transform: translate(0px, 0px) scale(1); }
+                33% { transform: translate(30px, -50px) scale(1.1); }
+                66% { transform: translate(-20px, 20px) scale(0.9); }
+                100% { transform: translate(0px, 0px) scale(1); }
+            }
+            .animate-blob { animation: blob 10s infinite; }
+            .animation-delay-2000 { animation-delay: 2s; }
+            .animation-delay-4000 { animation-delay: 4s; }
+            
+            @keyframes fade-in-up {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up { animation: fade-in-up 0.5s ease-out; }
+
+            @keyframes slide-up {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
+            
+            @keyframes bounce-short {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-3px); }
+            }
+            .animate-bounce-short { animation: bounce-short 0.5s ease-in-out; }
+
+            @keyframes fade-in {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .animate-fade-in { animation: fade-in 0.3s ease-in-out; }
         `}</style>
     </div>
   );
 };
 
-// --- Main App ---
-
-export default function App() {
-  const [data, setData] = useState<VillageData[]>([]);
-  const [filterStatus, setFilterStatus] = useState('ALL');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [view, setView] = useState<'map' | 'table' | 'stats' | 'rpjmd'>('map');
-  const [selectedVillage, setSelectedVillage] = useState<VillageData | null>(null);
-
-  useEffect(() => {
-    setData(getProcessedData());
-  }, []);
-
-  const filteredData = useMemo(() => {
-    return data.filter(d => {
-        const matchStatus = filterStatus === 'ALL' || d.status === filterStatus;
-        const matchSearch = searchTerm === '' || 
-                            d.desa.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            d.kec.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchStatus && matchSearch;
-    });
-  }, [data, filterStatus, searchTerm]);
-
-  const kpi = useMemo(() => {
-    return {
-        mandiri: filteredData.filter(x => x.status === 'MANDIRI').length,
-        maju: filteredData.filter(x => x.status === 'MAJU').length,
-        berkembang: filteredData.filter(x => x.status === 'BERKEMBANG').length
-    }
-  }, [filteredData]);
-
-  return (
-    <div className="h-screen flex flex-col overflow-hidden bg-slate-900 text-slate-100 font-inter">
-      <Navbar kpi={kpi} data={filteredData} />
-      
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar is only needed for data views, not strategic RPJMD view */}
-        <Sidebar 
-            data={filteredData} 
-            filterStatus={filterStatus}
-            setFilterStatus={setFilterStatus}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            onSelect={(v) => {
-                setSelectedVillage(v);
-            }}
-            showList={view !== 'rpjmd'} 
-        />
-
-        <main className="flex-1 flex flex-col bg-slate-900 relative">
-             <div className="h-12 bg-slate-800/50 border-b border-slate-700 flex items-end px-4 gap-1 shrink-0 overflow-x-auto">
-                <button 
-                    onClick={() => setView('map')} 
-                    className={`px-4 py-2 text-xs font-bold rounded-t transition whitespace-nowrap ${view === 'map' ? 'text-white border-b-2 border-blue-500 bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800 border-b-2 border-transparent'}`}
-                >
-                    <i className="fa-solid fa-map mr-2"></i> Peta Sebaran
-                </button>
-                <button 
-                    onClick={() => setView('table')} 
-                    className={`px-4 py-2 text-xs font-bold rounded-t transition whitespace-nowrap ${view === 'table' ? 'text-white border-b-2 border-blue-500 bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800 border-b-2 border-transparent'}`}
-                >
-                    <i className="fa-solid fa-table mr-2"></i> Tabel Data
-                </button>
-                <button 
-                    onClick={() => setView('stats')} 
-                    className={`px-4 py-2 text-xs font-bold rounded-t transition whitespace-nowrap ${view === 'stats' ? 'text-white border-b-2 border-blue-500 bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800 border-b-2 border-transparent'}`}
-                >
-                    <i className="fa-solid fa-chart-pie mr-2"></i> Analisis
-                </button>
-                <button 
-                    onClick={() => setView('rpjmd')} 
-                    className={`px-4 py-2 text-xs font-bold rounded-t transition whitespace-nowrap ${view === 'rpjmd' ? 'text-emerald-400 border-b-2 border-emerald-500 bg-emerald-900/20' : 'text-slate-400 hover:text-emerald-400 hover:bg-emerald-900/10 border-b-2 border-transparent'}`}
-                >
-                    <i className="fa-solid fa-scroll mr-2"></i> Perencanaan (RPJMD)
-                </button>
-            </div>
-
-            <div className="flex-1 relative overflow-hidden flex flex-col">
-                {view === 'map' && <MapView data={filteredData} onSelect={setSelectedVillage} />}
-                {view === 'table' && <TableView data={filteredData} onSelect={setSelectedVillage} />}
-                {view === 'stats' && <StatsView data={filteredData} />}
-                {view === 'rpjmd' && <RpjmdView />}
-            </div>
-        </main>
-      </div>
-
-      {selectedVillage && <DetailModal d={selectedVillage} onClose={() => setSelectedVillage(null)} />}
-    </div>
-  );
-}
+export default App;

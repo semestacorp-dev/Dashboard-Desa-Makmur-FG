@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -58,8 +59,31 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isGenerating, 
     }
   };
 
+  const handleDragEnter = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!disabled && !isGenerating) {
+      setIsDragging(true);
+    }
+  }, [disabled, isGenerating]);
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!disabled && !isGenerating) {
+      setIsDragging(true);
+    }
+  }, [disabled, isGenerating]);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
   const handleDrop = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
     if (disabled || isGenerating) return;
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
@@ -67,22 +91,10 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isGenerating, 
     }
   }, [disabled, isGenerating]);
 
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    if (!disabled && !isGenerating) {
-        setIsDragging(true);
-    }
-  }, [disabled, isGenerating]);
-
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
-
   return (
     <div className="w-full max-w-4xl mx-auto perspective-1000">
       <div 
-        className={`relative group transition-all duration-300 ${isDragging ? 'scale-[1.01]' : ''}`}
+        className={`relative group transition-all duration-300 ${isDragging ? 'scale-[1.02]' : 'hover:scale-[1.01]'}`}
       >
         <label
           className={`
@@ -90,18 +102,19 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isGenerating, 
             h-56 sm:h-64 md:h-[22rem]
             bg-zinc-900/30 
             backdrop-blur-sm
-            rounded-xl border border-dashed
+            rounded-xl border-2 border-dashed
             cursor-pointer overflow-hidden
             transition-all duration-300
             ${isDragging 
-              ? 'border-blue-500 bg-zinc-900/50 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]' 
+              ? 'border-blue-500 bg-zinc-800/50 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]' 
               : 'border-zinc-700 hover:border-zinc-500 hover:bg-zinc-900/40'
             }
-            ${isGenerating ? 'pointer-events-none' : ''}
+            ${isGenerating ? 'pointer-events-none opacity-50' : ''}
           `}
-          onDrop={handleDrop}
+          onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
         >
             {/* Technical Grid Background */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
